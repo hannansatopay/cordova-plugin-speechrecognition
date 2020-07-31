@@ -168,11 +168,15 @@ public class SpeechRecognition extends CordovaPlugin {
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
+    intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, true);
     intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, matches);
     intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
             activity.getPackageName());
     intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, showPartial);
     intent.putExtra("android.speech.extra.DICTATION_MODE", showPartial);
+    
+    intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, "10000");
+    intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, "10000");
 
     if (prompt != null) {
       intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
