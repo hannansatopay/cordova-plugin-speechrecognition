@@ -317,6 +317,8 @@ public class SpeechRecognition extends CordovaPlugin {
         }
         return;
       }
+      
+      callbackContext.error(errorMessage);
     }
 
     @Override
