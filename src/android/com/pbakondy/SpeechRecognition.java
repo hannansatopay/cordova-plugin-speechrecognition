@@ -294,8 +294,7 @@ public class SpeechRecognition extends CordovaPlugin {
       Log.d(LOG_TAG, "Error: " + errorMessage);
       // HACK: We swallow these three errors as they're popping up in non-critical situations:
       if (
-        errorCode == SpeechRecognizer.ERROR_CLIENT ||
-        errorCode == SpeechRecognizer.ERROR_NO_MATCH
+        errorCode == SpeechRecognizer.ERROR_CLIENT
       ) {
         return;
       }
