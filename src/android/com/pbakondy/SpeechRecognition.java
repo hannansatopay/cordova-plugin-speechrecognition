@@ -221,7 +221,7 @@ public class SpeechRecognition extends CordovaPlugin {
   }
 
   private void hasAudioPermission() {
-    PluginResult result = new PluginResult(audioPermissionGranted(RECORD_AUDIO_PERMISSION) ? PluginResult.Status.OK : PluginResult.Status.ERROR, MISSING_PERMISSION)
+    PluginResult result = new PluginResult(audioPermissionGranted(RECORD_AUDIO_PERMISSION) ? PluginResult.Status.OK : PluginResult.Status.ERROR, MISSING_PERMISSION);
     this.callbackContext.sendPluginResult(result);
   }
 
