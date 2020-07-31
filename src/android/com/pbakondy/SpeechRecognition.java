@@ -182,9 +182,9 @@ public class SpeechRecognition extends CordovaPlugin {
       intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
     }
     
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-     intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
-    }
+//     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//      intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+//     }
 
     if (showPopup) {
       cordova.startActivityForResult(this, intent, REQUEST_CODE_SPEECH);
