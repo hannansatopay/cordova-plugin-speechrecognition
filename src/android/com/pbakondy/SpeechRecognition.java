@@ -84,7 +84,8 @@ public class SpeechRecognition extends CordovaPlugin {
 
     try {
       if (IS_RECOGNITION_AVAILABLE.equals(action)) {
-        PluginResult result = new PluginResult(isRecognitionAvailable() ? PluginResult.Status.OK : PluginResult.Status.ERROR);
+        boolean available = isRecognitionAvailable();
+        PluginResult result = new PluginResult(PluginResult.Status.OK, available);
         callbackContext.sendPluginResult(result);
         return true;
       }
@@ -221,7 +222,7 @@ public class SpeechRecognition extends CordovaPlugin {
   }
 
   private void hasAudioPermission() {
-    PluginResult result = new PluginResult(audioPermissionGranted(RECORD_AUDIO_PERMISSION) ? PluginResult.Status.OK : PluginResult.Status.ERROR, MISSING_PERMISSION);
+    PluginResult result = new PluginResult(PluginResult.Status.OK, audioPermissionGranted(RECORD_AUDIO_PERMISSION));
     this.callbackContext.sendPluginResult(result);
   }
 
