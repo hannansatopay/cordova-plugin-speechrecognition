@@ -182,9 +182,9 @@ public class SpeechRecognition extends CordovaPlugin {
       intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
     }
     
-//     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//      intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
-//     }
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+     intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+    }
 
     if (showPopup) {
       cordova.startActivityForResult(this, intent, REQUEST_CODE_SPEECH);
@@ -289,7 +289,9 @@ public class SpeechRecognition extends CordovaPlugin {
     public void onError(int errorCode) {
       String errorMessage = getErrorText(errorCode);
       Log.d(LOG_TAG, "Error: " + errorMessage);
-      callbackContext.error(errorMessage);
+      if (errorCode != 7) { //7 = No Match, Google STT BUG
+        callbackContext.error(errorMessage);
+      }
     }
 
     @Override
