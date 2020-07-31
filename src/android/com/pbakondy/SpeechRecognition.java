@@ -185,8 +185,8 @@ public class SpeechRecognition extends CordovaPlugin {
     intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, showPartial);
     intent.putExtra("android.speech.extra.DICTATION_MODE", showPartial);
     
-    intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, "10000");
-    intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, "10000");
+//     intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, "10000");
+//     intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, "10000");
 
     if (prompt != null) {
       intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
@@ -295,14 +295,14 @@ public class SpeechRecognition extends CordovaPlugin {
     public void onError(int errorCode) {
       String errorMessage = getErrorText(errorCode);
       Log.d(LOG_TAG, "Error: " + errorMessage);
-//       // HACK: We swallow these three errors as they're popping up in non-critical situations:
-//       if (
-//         errorCode == SpeechRecognizer.ERROR_SPEECH_TIMEOUT ||
-//         errorCode == SpeechRecognizer.ERROR_CLIENT ||
-//         errorCode == SpeechRecognizer.ERROR_NO_MATCH
-//       ) {
-//         return;
-//       }
+      // HACK: We swallow these three errors as they're popping up in non-critical situations:
+      if (
+        errorCode == SpeechRecognizer.ERROR_SPEECH_TIMEOUT ||
+        errorCode == SpeechRecognizer.ERROR_CLIENT ||
+        errorCode == SpeechRecognizer.ERROR_NO_MATCH
+      ) {
+        return;
+      }
 
       // HACK: Swallow the `ERROR_RECOGNIZER_BUSY` non-critical error and we need to cancel the
       //   previous speech recognition task if it exists:
