@@ -84,8 +84,7 @@ public class SpeechRecognition extends CordovaPlugin {
 
     try {
       if (IS_RECOGNITION_AVAILABLE.equals(action)) {
-        boolean available = isRecognitionAvailable();
-        PluginResult result = new PluginResult(PluginResult.Status.OK, available);
+        PluginResult result = new PluginResult(isRecognitionAvailable() ? PluginResult.Status.OK : PluginResult.Status.ERROR);
         callbackContext.sendPluginResult(result);
         return true;
       }
@@ -163,6 +162,17 @@ public class SpeechRecognition extends CordovaPlugin {
 
   private void startListening(String language, int matches, String prompt, final Boolean showPartial, Boolean showPopup) {
     Log.d(LOG_TAG, "startListening() language: " + language + ", matches: " + matches + ", prompt: " + prompt + ", showPartial: " + showPartial + ", showPopup: " + showPopup);
+    
+    // Cancel the previous speech recognition task if it exists.
+    if(recognizer != null) {
+      Log.d(LOG_TAG, "startListening() canceling previous speech recognition task...");
+      view.post(new Runnable() {
+        @Override
+        public void run() {
+          recognizer.stopListening();
+        }
+      });
+    }
 
     final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -180,10 +190,6 @@ public class SpeechRecognition extends CordovaPlugin {
 
     if (prompt != null) {
       intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
-    }
-    
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-     intent.putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
     }
 
     if (showPopup) {
@@ -215,7 +221,7 @@ public class SpeechRecognition extends CordovaPlugin {
   }
 
   private void hasAudioPermission() {
-    PluginResult result = new PluginResult(PluginResult.Status.OK, audioPermissionGranted(RECORD_AUDIO_PERMISSION));
+    PluginResult result = new PluginResult(audioPermissionGranted(RECORD_AUDIO_PERMISSION) ? PluginResult.Status.OK : PluginResult.Status.ERROR, MISSING_PERMISSION);
     this.callbackContext.sendPluginResult(result);
   }
 
@@ -289,8 +295,27 @@ public class SpeechRecognition extends CordovaPlugin {
     public void onError(int errorCode) {
       String errorMessage = getErrorText(errorCode);
       Log.d(LOG_TAG, "Error: " + errorMessage);
-      if (errorCode != 7) { //7 = No Match, Google STT BUG
-        callbackContext.error(errorMessage);
+      // HACK: We swallow these three errors as they're popping up in non-critical situations:
+      if (
+        errorCode == SpeechRecognizer.ERROR_SPEECH_TIMEOUT ||
+        errorCode == SpeechRecognizer.ERROR_CLIENT ||
+        errorCode == SpeechRecognizer.ERROR_NO_MATCH
+      ) {
+        return;
+      }
+
+      // HACK: Swallow the `ERROR_RECOGNIZER_BUSY` non-critical error and we need to cancel the
+      //   previous speech recognition task if it exists:
+      if (errorCode == SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
+        if (recognizer != null) {
+          view.post(new Runnable() {
+            @Override
+            public void run() {
+              recognizer.stopListening();
+            }
+          });
+        }
+        return;
       }
     }
 
